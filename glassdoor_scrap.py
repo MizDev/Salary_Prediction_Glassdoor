@@ -14,10 +14,10 @@ def get_jobs(keyword, num_jobs, verbose):
     #options.add_argument('headless')
     
     #Change the path to where chromedriver is in your home folder.
-    driver = webdriver.Chrome(executable_path="/Users/Admin/Desktop/Data Science Projects/Salary Prediction Glassdoor/chromedriver", options=options)
+    driver = webdriver.Chrome(executable_path="/Users/Miz/Desktop/Data Science Projects/Salary Prediction Glassdoor/chromedriver.exe", options=options)
     driver.set_window_size(1120, 1000)
 
-    url = 'https://www.glassdoor.com/Job/jobs.htm?sc.keyword="' + keyword + '"&locT=C&locId=1147401&locKeyword=San%20Francisco,%20CA&jobType=all&fromAge=-1&minSalary=0&includeNoSalaryJobs=true&radius=100&cityId=-1&minRating=0.0&industryId=-1&sgocId=-1&seniorityType=all&companyId=-1&employerSizes=0&applicationType=0&remoteWorkType=0'
+    url = 'https://www.glassdoor.com/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword='+ keyword +'&sc.keyword='+ keyword +'&locT=&locId=&jobType='
     driver.get(url)
     jobs = []
 
@@ -43,13 +43,13 @@ def get_jobs(keyword, num_jobs, verbose):
         
         #Going through each job in this page
         job_buttons = driver.find_elements_by_class_name("jl")  #jl for Job Listing. These are the buttons we're going to click.
-        for job_button in job_buttons:  
-
+        for job_button in job_buttons:
             print("Progress: {}".format("" + str(len(jobs)) + "/" + str(num_jobs)))
             if len(jobs) >= num_jobs:
                 break
 
-            job_button.click()  #You might 
+            #job_button.click()  #You might 
+            driver.execute_script("arguments[0].click();", job_button)
             time.sleep(1)
             collected_successfully = False
             
@@ -64,7 +64,7 @@ def get_jobs(keyword, num_jobs, verbose):
                     time.sleep(5)
 
             try:
-                salary_estimate = driver.find_element_by_xpath('.//span[@class="gray salary"]').text
+                salary_estimate = driver.find_element_by_xpath('.//div[@class="salary"]//span[@class="gray salary"]').text
             except NoSuchElementException:
                 salary_estimate = -1 #You need to set a "not found value. It's important."
             
